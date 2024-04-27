@@ -1,0 +1,36 @@
+{
+    "chain": "stacks",
+    "uuid": "2",
+    "name": "API pull",
+    "version": 1,
+    "networks": {
+        "devnet": {
+            "if_this": {
+                "scope": "print_event",
+                "contract_identifier": "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.stx-bridge",
+                "contains": "pull"
+            },
+            "then_that": {
+                "http_post": {
+                    "url": "https://webhook.site/485a4e6d-6a62-47ba-bd54-6c67f3b08b91",
+                    "authorization_header": "Bearer cn389ncoiwuencr"
+                }
+            },
+            "start_block": 1
+        },
+        "testnet": {
+            "if_this": {
+                "scope": "print_event",
+                "contract_identifier": "ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41.stx-bridge",
+                "contains": "pull"
+            },
+            "then_that": {
+                "http_post": {
+                    "url": "https://webhook.site/485a4e6d-6a62-47ba-bd54-6c67f3b08b91",
+                    "authorization_header": "Bearer cn389ncoiwuencr"
+                }
+            },
+            "start_block": 152637
+        }
+    }
+}

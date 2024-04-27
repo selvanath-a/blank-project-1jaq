@@ -1,0 +1,12 @@
+#V2
+(contract-call? .hello-stacks write-message u"Hello there")
+get_block_height
+::get_block_height
+(contract-call? .crash-testnet test-mint 'STNHKEPYEPJ8ET55ZZ0M5A34J0R3N5FM2CMMMAZ6 u1 false)
+(contract-call? .crash-testnet set-nft-list (u6 u7 u8 u9 u10))
+(contract-call? .crash-testnet set-nft-list (list u6 u7 u8 u9 u10))
+(contract-call? .crash-testnet set-recipient 'STNHKEPYEPJ8ET55ZZ0M5A34J0R3N5FM2CMMMAZ6)
+(contract-call? .crash-testnet test-mint 'STNHKEPYEPJ8ET55ZZ0M5A34J0R3N5FM2CMMMAZ6 u1 false)
+(contract-call? .crash-testnet test-mint 'STNHKEPYEPJ8ET55ZZ0M5A34J0R3N5FM2CMMMAZ6 u1 true)
+(contract-call? .crash-testnet test-mint 'STNHKEPYEPJ8ET55ZZ0M5A34J0R3N5FM2CMMMAZ6 u11 true)
+(contract-call? .crash-testnet test-mint 'STNHKEPYEPJ8ET55ZZ0M5A34J0R3N5FM2CMMMAZ6 u1 false)
