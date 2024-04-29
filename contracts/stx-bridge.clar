@@ -1,5 +1,5 @@
 ;; (use-trait nft-trait 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.nft-trait.nft-trait)
-;; (use-trait nft-ownable-trait 'ST1FK5YJHH3NARMGQZ469JZAV4S4WDJ4P4DBKHYF5.nft-ownable-trait.nft-ownable-trait)
+;; (use-trait nft-ownable-trait 'ST3MSZPVNN783PB6D02DK5879RWPA1E36Z53VA2E.nft-ownable-trait.nft-ownable-trait)
 ;; (use-trait nft-trait 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.nft-trait.nft-trait)
 ;; (use-trait nft-ownable-trait 'ST1FK5YJHH3NARMGQZ469JZAV4S4WDJ4P4DBKHYF5.nft-ownable-trait.nft-ownable-trait)
 (use-trait nft-trait .nft-trait.nft-trait)
@@ -18,7 +18,8 @@
 (define-constant contract-address (as-contract tx-sender))
 (define-data-var payment-account principal tx-sender)
 ;; (define-data-var operator-public-key (buff 33) 0x023927ac7ad6d33551df267e1611484a4367f70b9ec4e0bfc418abf71b075d329b)
-(define-data-var operator-public-key (buff 33) 0x0390a5cac7c33fda49f70bc1b0866fa0ba7a9440d9de647fecb8132ceb76a94dfa)
+;; (define-data-var operator-public-key (buff 33) 0x0390a5cac7c33fda49f70bc1b0866fa0ba7a9440d9de647fecb8132ceb76a94dfa)
+(define-data-var operator-public-key (buff 33) 0x027624c19b713c3fc7a2713bef95e236e8efc70bf1059c6132648aa2a894539f6d)
 (define-data-var bridge-fee uint u5000000) ;; 5 usd
 (define-data-var collection-count uint u0)
 (define-map bridge-nonce {collection: principal, id: uint} uint)
@@ -55,30 +56,30 @@
 	(ok (asserts! (is-standard address) ERR-INVALID-ADDRESS))
 )
 
-(define-public (send-to-bridge (nft-asset-contract <nft-trait>) (nft-id uint) (takeFee bool) (dest-chain (string-ascii 10)) (dest-address (string-ascii 42)) (bridge-tx-id (buff 16)))
+(define-public (send-to-bridge (nft-asset-contract <nft-trait>) (nft-id uint) (take-fee bool) (dest-chain (string-ascii 10)) (dest-address (string-ascii 128)) (bridge-tx-id (string-ascii 32)))
 	(let
 		((collection-id (map-get? collection-ids {collection: ( contract-of nft-asset-contract)}))
 		(nonce (default-to u0 (map-get? bridge-nonce {collection: ( contract-of nft-asset-contract),id: nft-id}))))
 			
 		(asserts! (is-some collection-id) ERR-NOT-REGISTERED-COLLECTION)
 		
-		(map-set bridge-take-fee {collection: ( contract-of nft-asset-contract),id: nft-id,nonce: nonce} takeFee)
+		(map-set bridge-take-fee {collection: ( contract-of nft-asset-contract),id: nft-id,nonce: nonce} take-fee)
 		(map-set bridge-nonce {collection: ( contract-of nft-asset-contract),id: nft-id} (+ nonce u1))
 
 		(if
-			(is-eq takeFee true)
+			(is-eq take-fee true)
 			(begin
 				(try! (stx-transfer? (get-bridge-fee (var-get bridge-fee)) tx-sender (var-get payment-account)))
 			)
 			false
 		)
 		(try! (contract-call? nft-asset-contract transfer nft-id tx-sender contract-address))
-		(print {collection: ( contract-of nft-asset-contract),id: nft-id,takeFee: takeFee,dest-chain:dest-chain,dest-address: dest-address,origin-chain: (get-collection-origin nft-asset-contract), bridge-tx-id:bridge-tx-id,nonce: nonce})
+		(print {action:"send-to-bridge",collection: ( contract-of nft-asset-contract),nft-id: nft-id,take-fee: take-fee,dest-chain:dest-chain,dest-address: dest-address,origin-chain: (get-collection-origin nft-asset-contract), bridge-tx-id:bridge-tx-id,nonce: nonce})
 		(ok true)
 	)
 )
 
-(define-public (pull-from-bridge (nft-asset-contract <nft-trait>) (nft-admin-contract  (optional <nft-ownable-trait>)) (nft-id uint) (takeFee bool) (dest-address principal) (sign (buff 65)) (bridge-tx-id (buff 16)))
+(define-public (pull-from-bridge (nft-asset-contract <nft-trait>) (nft-admin-contract  (optional <nft-ownable-trait>)) (nft-id uint) (take-fee bool) (dest-address principal) (sign (buff 65)) (bridge-tx-id (string-ascii 32)))
 	(let
 		((collection-id (map-get? collection-ids {collection: ( contract-of nft-asset-contract)}))
 		(nonce (default-to u0 (map-get? bridge-nonce {collection: ( contract-of nft-asset-contract),id: nft-id})))
@@ -87,7 +88,7 @@
 		(try! (check-is-valid-address dest-address))
 		(try! (check-is-operator))
 		(asserts! (is-some collection-id) ERR-NOT-REGISTERED-COLLECTION)
-		(asserts! (check-signature sign (unwrap! collection-id ERR-NOT-REGISTERED-COLLECTION) nft-id nonce takeFee) ERR-VERIFICATION-FAILED)
+		(asserts! (check-signature sign (unwrap! collection-id ERR-NOT-REGISTERED-COLLECTION) nft-id nonce take-fee) ERR-VERIFICATION-FAILED)
 		(begin
 			(if (and can-mint ( is-none (try! (contract-call? nft-asset-contract get-owner nft-id))))
 			(try! (mint-token nft-admin-contract nft-id dest-address))
@@ -95,14 +96,14 @@
 			)
 		)
 		(map-set bridge-nonce {collection: ( contract-of nft-asset-contract),id: nft-id} (+ nonce u1))
-		(map-set bridge-take-fee {collection: ( contract-of nft-asset-contract),id: nft-id,nonce: nonce} takeFee)
+		(map-set bridge-take-fee {collection: ( contract-of nft-asset-contract),id: nft-id,nonce: nonce} take-fee)
 		(map-set bridged-to {collection: ( contract-of nft-asset-contract),id: nft-id,nonce: nonce} dest-address)
-		(print {collection: ( contract-of nft-asset-contract),id: nft-id,takeFee: takeFee,dest: dest-address,bridge-tx-id:bridge-tx-id,nonce: nonce})
+		(print {action:"pull-from-bridge",collection: ( contract-of nft-asset-contract),id: nft-id,take-fee: take-fee,dest: dest-address,bridge-tx-id:bridge-tx-id,nonce: nonce})
 		(ok true)
 	)
 )
 
-(define-private (check-signature (sign (buff 65)) (collection-id uint) (nft-id uint) (nonce uint) (takeFee bool)) 
+(define-private (check-signature (sign (buff 65)) (collection-id uint) (nft-id uint) (nonce uint) (take-fee bool)) 
 (let (
 	(hash 
 		(sha256 
@@ -113,7 +114,7 @@
 						(sha256 nonce)
 					)
 				)
-				(sha256 (if takeFee u1 u0))
+				(sha256 (if take-fee u1 u0))
 			)
 		)
 	)
@@ -135,7 +136,7 @@
 		)
 
 		(try! (stx-transfer? (get-bridge-fee (var-get bridge-fee)) tx-sender (var-get payment-account)))
-		(print {action: "pay-bridge-fees",collection: ( contract-of nft-asset-contract),id: nft-id,takeFee: take-fee,dest: dest-address,nonce: nonce})
+		(print {action: "pay-bridge-fees",collection: ( contract-of nft-asset-contract),id: nft-id,take-fee: take-fee,dest: dest-address,nonce: nonce})
 		(ok true)
 	)
 )
@@ -224,7 +225,7 @@
 	(let
 		((stx-price (contract-call? .arkadiko-oracle-v1 get-price "STX")))
 		;; ((stx-price (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.arkadiko-oracle-v1 get-price "STX")))
-			;; (stx-price (contract-call? 'ST1FK5YJHH3NARMGQZ469JZAV4S4WDJ4P4DBKHYF5.arkadiko-oracle-v1 get-price "STX")))
+			;; ((stx-price (contract-call? 'ST1FK5YJHH3NARMGQZ469JZAV4S4WDJ4P4DBKHYF5.arkadiko-oracle-v1 get-price "STX")))
 		(default-to u0 (some (/ (* usd-value (get decimals stx-price)) (get last-price stx-price))))
 	)
 )

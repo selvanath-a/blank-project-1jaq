@@ -7,29 +7,31 @@
         "devnet": {
             "if_this": {
                 "scope": "print_event",
-                "contract_identifier": "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.stx-bridge",
-                "contains": "send"
+                "contract_identifier": "ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5.stx-bridge",
+                "contains": "send-to-bridge"
             },
             "then_that": {
                 "http_post": {
-                    "url": "https://webhook.site/485a4e6d-6a62-47ba-bd54-6c67f3b08b91",
+                    "url": "http://localhost:8889/backend/post-send-ops",
                     "authorization_header": "Bearer cn389ncoiwuencr"
                 }
             },
+            "decode_clarity_values": true,
             "start_block": 1
         },
         "testnet": {
             "if_this": {
                 "scope": "print_event",
                 "contract_identifier": "ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41.stx-bridge",
-                "contains": "send"
+                "contains": "send-to-bridge"
             },
             "then_that": {
                 "http_post": {
-                    "url": "https://webhook.site/485a4e6d-6a62-47ba-bd54-6c67f3b08b91",
+                    "url": "http://localhost:8889/api/backend/post-send-ops",
                     "authorization_header": "Bearer cn389ncoiwuencr"
                 }
             },
+            "decode_clarity_values": true,
             "start_block": 152637
         }
     }
