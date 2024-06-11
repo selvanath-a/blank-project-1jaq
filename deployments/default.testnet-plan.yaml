@@ -8,59 +8,59 @@ plan:
   batches:
     - id: 0
       transactions:
-        - contract-publish:
-            contract-name: oracle-trait
-            expected-sender: ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41
-            cost: 1500
-            path: "contracts\\oracle-trait.clar"
-            anchor-block-only: true
-            clarity-version: 2
-        - contract-publish:
-            contract-name: arkadiko-oracle-v1
-            expected-sender: ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41
-            cost: 14230
-            path: "contracts\\arkadiko-oracle-v1.clar"
-            anchor-block-only: true
-            clarity-version: 2
-        - contract-publish:
-            contract-name: commission-trait
-            expected-sender: ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41
-            cost: 710
-            path: "contracts\\commission-trait.clar"
-            anchor-block-only: true
-            clarity-version: 2
-        - contract-publish:
-            contract-name: crash-testnet
-            expected-sender: ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41
-            cost: 113050
-            path: "contracts\\crash-testnet.clar"
-            anchor-block-only: true
-            clarity-version: 2
-        - contract-publish:
-            contract-name: nft-ownable-trait
-            expected-sender: ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41
-            cost: 7470
-            path: "contracts\\nft-ownable-trait.clar"
-            anchor-block-only: true
-            clarity-version: 2
-        - contract-publish:
-            contract-name: nft-trait
-            expected-sender: ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41
-            cost: 4670
-            path: "contracts\\nft-trait.clar"
-            anchor-block-only: true
-            clarity-version: 2
-        - contract-publish:
-            contract-name: operable
-            expected-sender: ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41
-            cost: 8860
-            path: "contracts\\operable.clar"
-            anchor-block-only: true
-            clarity-version: 2
+        # - contract-publish:
+        #     contract-name: oracle-trait
+        #     expected-sender: ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41
+        #     cost: 1500
+        #     path: "contracts\\oracle-trait.clar"
+        #     anchor-block-only: true
+        #     clarity-version: 2
+        # - contract-publish:
+        #     contract-name: arkadiko-oracle-v1
+        #     expected-sender: ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41
+        #     cost: 14230
+        #     path: "contracts\\arkadiko-oracle-v1.clar"
+        #     anchor-block-only: true
+        #     clarity-version: 2
+        # - contract-publish:
+        #     contract-name: commission-trait
+        #     expected-sender: ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41
+        #     cost: 710
+        #     path: "contracts\\commission-trait.clar"
+        #     anchor-block-only: true
+        #     clarity-version: 2
+        # - contract-publish:
+        #     contract-name: nft-trait
+        #     expected-sender: ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41
+        #     cost: 4670
+        #     path: "contracts\\nft-trait.clar"
+        #     anchor-block-only: true
+        #     clarity-version: 2
+        # - contract-publish:
+        #     contract-name: operable
+        #     expected-sender: ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41
+        #     cost: 8860
+        #     path: "contracts\\operable.clar"
+        #     anchor-block-only: true
+        #     clarity-version: 2
+        # - contract-publish:
+        #     contract-name: crash-testnet
+        #     expected-sender: ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41
+        #     cost: 113740
+        #     path: "contracts\\crash-testnet.clar"
+        #     anchor-block-only: true
+        #     clarity-version: 2
+        # - contract-publish:
+        #     contract-name: nft-ownable-trait
+        #     expected-sender: ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41
+        #     cost: 7470
+        #     path: "contracts\\nft-ownable-trait.clar"
+        #     anchor-block-only: true
+        #     clarity-version: 2
         - contract-publish:
             contract-name: stx-bridge
             expected-sender: ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41
-            cost: 122080
+            cost: 119580
             path: "contracts\\stx-bridge.clar"
             anchor-block-only: true
             clarity-version: 2

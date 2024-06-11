@@ -46,7 +46,7 @@ plan:
         - contract-publish:
             contract-name: crash-testnet
             expected-sender: ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5
-            cost: 113050
+            cost: 115000
             path: "contracts\\crash-testnet.clar"
             anchor-block-only: true
             clarity-version: 2
@@ -60,7 +60,7 @@ plan:
         - contract-publish:
             contract-name: stx-bridge
             expected-sender: ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5
-            cost: 120880
+            cost: 131570
             path: "contracts\\stx-bridge.clar"
             anchor-block-only: true
             clarity-version: 2

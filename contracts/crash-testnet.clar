@@ -1,18 +1,20 @@
 ;; Interface definitions
 ;; (impl-trait 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.nft-trait)
 ;; (impl-trait 'ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5.nft-trait.nft-trait)
-(impl-trait 'ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5.nft-trait.nft-trait)
+(impl-trait .nft-trait.nft-trait)
 ;; (impl-trait 'SP3N4AJFZZYC4BK99H53XP8KDGXFGQ2PRSQP2HGT6.operable.operable)
 ;; (impl-trait 'ST1FK5YJHH3NARMGQZ469JZAV4S4WDJ4P4DBKHYF5.operable.operable)
-(impl-trait 'ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5.operable.operable)
+(impl-trait .operable.operable)
 
 ;; TODO: either deploy it on admin address, or use an existing mainnet one
 ;; (use-trait commission-trait 'ST1FK5YJHH3NARMGQZ469JZAV4S4WDJ4P4DBKHYF5.commission-trait.commission)
-(use-trait commission-trait 'ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5.commission-trait.commission)
+(use-trait commission-trait .commission-trait.commission)
 
 ;; contract variables
 
-(define-data-var administrator principal 'ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5)
+(define-data-var administrator principal 'ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41)
+
+(define-data-var counter uint u0)
 
 
 ;; TODO: MAKE SURE THIS MINT COUNTER IS CORRECT. SHOULD BE THE MINT-COUNTER FROM V1. DOUBLE CHECK IF OFF BY 1 ERROR
@@ -297,17 +299,17 @@
 
 ;; TODO: add all whitelists
 ;; (map-set mint-pass 'ST1FK5YJHH3NARMGQZ469JZAV4S4WDJ4P4DBKHYF5 u2)
-(map-set mint-pass 'ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5 u100)
+(map-set mint-pass 'ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41 u100)
 
-(define-data-var recipient-add principal 'ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5)
+(define-data-var recipient-add principal 'ST2KJVQ3Y6JFW2S8JV9H36SG92R7P023XJ92QCA41)
 
 (define-public (set-recipient (recipient principal))
     (ok (var-set recipient-add recipient))
 )
 
-(define-data-var nft-list (list 5 uint) (list u1 u2 u3 u4 u5))
+(define-data-var nft-list (list 15 uint) (list u1 u2 u3 u4 u5 u6 u7 u8 u9 u10 u11 u12 u13 u14 u15))
 
-(define-public (set-nft-list (nftList (list 5 uint)))
+(define-public (set-nft-list (nftList (list 15 uint)))
    (ok (var-set nft-list nftList))
 )
 
@@ -315,16 +317,18 @@
     (nft-mint? crashpunks-v2 id (var-get recipient-add))
 )
 
-(define-public (test-mint (recipient principal) (id uint) (flag  bool))
+(define-public (test-mint (recipient principal) (id uint) (mint-1-not-15  bool))
     (begin
         (asserts! (< id COLLECTION-MAX-SUPPLY) ERR-COLLECTION-LIMIT-REACHED)
         
-		(if (is-eq true flag)
-			(try! (nft-mint? crashpunks-v2 id 'ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5))
-			(try! (fold check-err (map test-mint-helper (var-get nft-list)) (ok true)))
+		(if (is-eq true mint-1-not-15)
+			(try! (nft-mint? crashpunks-v2 id recipient))
+			(try! (fold check-err (map test-mint-helper (map add-counter (var-get nft-list))) (ok true)))
             )
-		
-     
+       	(var-set counter (+ (var-get counter) u15))  
         (ok true)
     )
+)
+(define-private (add-counter (item uint))
+   (+ item (var-get counter))
 )

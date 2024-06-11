@@ -18,6 +18,9 @@
 (define-data-var contract-operator principal tx-sender)
 (define-constant contract-address (as-contract tx-sender))
 (define-data-var payment-account principal tx-sender)
+;; (define-data-var operator-public-key (buff 33) 0x023927ac7ad6d33551df267e1611484a4367f70b9ec4e0bfc418abf71b075d329b)
+;; (define-data-var operator-public-key (buff 33) 0x0390a5cac7c33fda49f70bc1b0866fa0ba7a9440d9de647fecb8132ceb76a94dfa)
+(define-data-var operator-public-key (buff 33) 0x027624c19b713c3fc7a2713bef95e236e8efc70bf1059c6132648aa2a894539f6d)
 (define-data-var bridge-fee uint u5000000) ;; 5 usd
 (define-data-var collection-count uint u0)
 (define-map bridge-nonce {collection: principal, id: uint} uint)
@@ -77,7 +80,7 @@
 	)
 )
 
-(define-public (pull-from-bridge (nft-asset-contract <nft-trait>) (nft-admin-contract  (optional <nft-ownable-trait>)) (nft-id uint) (take-fee bool) (dest-address principal) (bridge-tx-id (string-ascii 32)))
+(define-public (pull-from-bridge (nft-asset-contract <nft-trait>) (nft-admin-contract  (optional <nft-ownable-trait>)) (nft-id uint) (take-fee bool) (dest-address principal) (sign (buff 65)) (bridge-tx-id (string-ascii 32)))
 	(let
 		((collection-id (map-get? collection-ids {collection: ( contract-of nft-asset-contract)}))
 		(nonce (default-to u0 (map-get? bridge-nonce {collection: ( contract-of nft-asset-contract),id: nft-id})))
@@ -86,6 +89,7 @@
 		(try! (check-is-valid-address dest-address))
 		(try! (check-is-operator))
 		(asserts! (is-some collection-id) ERR-NOT-REGISTERED-COLLECTION)
+		(asserts! (check-signature sign (unwrap! collection-id ERR-NOT-REGISTERED-COLLECTION) nft-id nonce take-fee) ERR-VERIFICATION-FAILED)
 		(begin
 			(if (and can-mint ( is-none (try! (contract-call? nft-asset-contract get-owner nft-id))))
 			(try! (mint-token nft-admin-contract nft-id dest-address))
@@ -98,6 +102,26 @@
 		(print {event:"pull-from-bridge",collection: ( contract-of nft-asset-contract),id: nft-id,take-fee: take-fee,dest: dest-address,bridge-tx-id:bridge-tx-id,nonce: nonce})
 		(ok true)
 	)
+)
+
+(define-private (check-signature (sign (buff 65)) (collection-id uint) (nft-id uint) (nonce uint) (take-fee bool)) 
+(let (
+	(hash 
+		(sha256 
+			(concat 
+				(sha256  
+					(concat
+  						(sha256 (concat (sha256 collection-id) (sha256 nft-id))) 
+						(sha256 nonce)
+					)
+				)
+				(sha256 (if take-fee u1 u0))
+			)
+		)
+	)
+)
+(secp256k1-verify hash sign (var-get operator-public-key))
+)
 )
 
 (define-private (mint-token (nft-admin-contract  (optional <nft-ownable-trait>)) (nft-id uint) (dest-address principal)) 
@@ -150,6 +174,15 @@
 ;; 		(asserts! (is-some (map-get? collection-ids {collection: ( contract-of nft-asset-contract)})) ERR-NOT-REGISTERED-COLLECTION)
 ;; 		(ok (map-set chain-contract-addresses {collection: ( contract-of nft-asset-contract), chain: chain} chain-contract-address)))
 ;; )
+
+(define-public (set-operator-public-key (public-key (buff 33)))
+	(begin
+		(asserts! (is-eq tx-sender (var-get contract-operator)) ERR-NOT-AUTHORIZED)
+		(asserts! (is-eq (ok tx-sender) (principal-of? public-key)) ERR-NOT-SAME-PRINCIPAL)
+		(var-set operator-public-key public-key)
+		(ok true)
+	)
+)
 
 (define-public (set-payment-account (new-payment-account principal))
 	(begin

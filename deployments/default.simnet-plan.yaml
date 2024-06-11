@@ -79,12 +79,7 @@ plan:
             emulated-sender: ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5
             path: "contracts\\crash-testnet.clar"
             clarity-version: 2
-        - emulated-contract-publish:
-            contract-name: hello-stacks
-            emulated-sender: ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5
-            path: "contracts\\hello-stacks.clar"
-            clarity-version: 2
-        - emulated-contract-publish:
+clarinet        - emulated-contract-publish:
             contract-name: nft-ownable-trait
             emulated-sender: ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5
             path: "contracts\\nft-ownable-trait.clar"
